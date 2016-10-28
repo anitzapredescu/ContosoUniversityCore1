@@ -4,7 +4,7 @@
 - rulat script sql în ambele
 - modificat connection string în appsettings.json
 - și în ambele proiecte de test, ca să poată rula
-- nu se rebuilduiesc proeictele de test dacă modifici appsettings.json,
+- nu se rebuilduiesc proiectele de test dacă modifici appsettings.json,
   așa că trebuie șters bin de mînă
 global.json
 - zice că avem test și src
