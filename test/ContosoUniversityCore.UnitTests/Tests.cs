@@ -5,7 +5,9 @@
 
     public class AutoMapperTests
     {
-        public void Should_have_valid_configuration() 
+        // this parameter is needed so that the initialization code
+        // (automapper config) runs
+        public void Should_have_valid_configuration(ContainerFixture fixture) 
         {
             Mapper.AssertConfigurationIsValid();
         }
