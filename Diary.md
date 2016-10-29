@@ -36,3 +36,16 @@ appsettings.json
     services.AddScoped(_ => new SchoolContext(
         Configuration["Data:DefaultConnection:ConnectionStringsss"]));
 - zice ceva de logging, dar nu e clar unde & cum se loghează anume
+    - în Startup.cs, se configurează să scrie la consolă; acolo ai zice dacă
+      vrei altceva; vezi și https://docs.asp.net/en/latest/fundamentals/logging.html
+Program.cs
+- construiește un WebHostBuilder, zice să ruleze Kestrel în spatele IIS,
+  părțile interesante par a fi în Startup.cs
+Startup.cs:
+- pare că lui Jimmy îi plac using-uri în namespace
+- încarcă fișiere de configurare din diverse surse
+- nu mi-e clară diferența dintre Configure() și ConfigureServices() și de ce e
+  nevoie de amîndouă
+- în Configure() se setează ruta default (dacă vrei altceva decît Home/Index)
+
+TODO: văzut ce e în ConfigureServices()
