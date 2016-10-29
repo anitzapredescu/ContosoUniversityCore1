@@ -80,7 +80,7 @@
             {
                 routes.MapRoute(
                     "default",
-                    "{controller=Home}/{action=Index}/{id?}");
+                    "{controller=Student}/{action=Index}/{id?}");
             });
         }
     }
