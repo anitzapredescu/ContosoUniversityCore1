@@ -1,4 +1,6 @@
-﻿Baza de date
+﻿# Ziua 1
+
+Baza de date
 - găsit instanță localdb (sqllocaldb -?)
 - creat baze de date ContosoUniversity & ContosoUniversity-Test
 - rulat script sql în ambele
@@ -13,3 +15,15 @@ F5
 Rulat teste
 - trebuie adăugat un parametru la metoda din unit test, ca să se inițializeze
   Automapper
+
+# Ziua 2
+
+Cum deployez?
+- eroare „No executable found matching command "dotnet-bundle"”: am făcut
+  upgrade la BundlerMinifier.Core, l-am mutat din dependencies în tools
+- eroare că nu există framework 1.1.0-preview etc. Pare că e din cauza
+  upgrade-ului lui BundlerMinifier.Core, că nu am găsit nicăieri 1.1.0 explicit.
+  Am instalat https://go.microsoft.com/fwlink/?LinkID=831469 și am trecut de
+  asta.
+- ceva e suspect la mine în IIS, nu apare Management Service nici după ce
+  pornesc WMSvc. Mă dau bătut
