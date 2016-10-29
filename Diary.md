@@ -27,3 +27,12 @@ Cum deployez?
   asta.
 - ceva e suspect la mine în IIS, nu apare Management Service nici după ce
   pornesc WMSvc. Mă dau bătut
+web.config
+- nu mai e mare lucru acolo, doar un handler de aspNetCore și un link la cum se
+  configurează acum
+appsettings.json
+- are un connection string; dacă modifici cum se cheamă, trebuie modificat și în
+  Startup.cs, unde zice:
+    services.AddScoped(_ => new SchoolContext(
+        Configuration["Data:DefaultConnection:ConnectionStringsss"]));
+- zice ceva de logging, dar nu e clar unde & cum se loghează anume
