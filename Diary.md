@@ -47,5 +47,17 @@ Startup.cs:
 - nu mi-e clară diferența dintre Configure() și ConfigureServices() și de ce e
   nevoie de amîndouă
 - în Configure() se setează ruta default (dacă vrei altceva decît Home/Index)
+ConfigureServices
+- FeatureConvention: adaugă în controller.Properties o cheie `feature` după
+  namespace, folosit la a găsi view-ul în același folder (în
+  FeatureViewLocationExpander, vezi AddRazorOptions)
+- DbContextTransactionFilter creează o tranzacție per request
+- ValidatorActionFilter: întoarce eroare (BadRequest sau 400) dacă modelul nu e
+  valid
+- EntityModelBinder: trimiți id în request, încarcă entitatea din bază, de
+  exemplu în lista de cursuri dacă selectezi un departament
+- pe urmă adaugă Automapper, Mediatr, HtmlTags și DbContext per request
+- nu e clar unde (& dacă) e configurat FluentValidator
 
-TODO: văzut ce e în ConfigureServices()
+TODO: de înțeles HtmlTags, TagConventions e.g.  EntitySelectElementBuilder care
+populează un dropdown
