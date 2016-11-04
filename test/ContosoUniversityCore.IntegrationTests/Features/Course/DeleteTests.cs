@@ -10,7 +10,7 @@
 
     public class DeleteTests
     {
-        public async Task Should_query_for_command(ContainerFixture fixture)
+        public async Task Should_query_for_command(SliceFixture fixture)
         {
             var admin = new Instructor
             {
@@ -18,11 +18,6 @@
                 LastName = "Costanza",
                 HireDate = DateTime.Today,
             };
-            await fixture.ExecuteDbContextAsync(async db =>
-            {
-                db.Instructors.Add(admin);
-                await db.SaveChangesAsync();
-            });
 
             var dept = new Department
             {
@@ -32,27 +27,17 @@
                 StartDate = DateTime.Today
             };
 
-            await fixture.ExecuteDbContextAsync(async db =>
-            {
-                db.Departments.Add(dept);
-                await db.SaveChangesAsync();
-            });
-
             var course = new Course
             {
                 Credits = 4,
                 Department = dept,
-                CourseID = 1234,
+                Id = 1234,
                 Title = "English 101"
             };
 
-            await fixture.ExecuteDbContextAsync(async db =>
-            {
-                db.Courses.Add(course);
-                await db.SaveChangesAsync();
-            });
+            await fixture.InsertAsync(admin, dept, course);
 
-            var result = await fixture.SendAsync(new Delete.Query {Id = course.CourseID});
+            var result = await fixture.SendAsync(new Delete.Query {Id = course.Id});
 
             result.ShouldNotBeNull();
             result.Credits.ShouldBe(course.Credits);
@@ -60,7 +45,7 @@
             result.Title.ShouldBe(course.Title);
         }
 
-        public async Task Should_delete(ContainerFixture fixture)
+        public async Task Should_delete(SliceFixture fixture)
         {
             var admin = new Instructor
             {
@@ -68,11 +53,6 @@
                 LastName = "Costanza",
                 HireDate = DateTime.Today,
             };
-            await fixture.ExecuteDbContextAsync(async db =>
-            {
-                db.Instructors.Add(admin);
-                await db.SaveChangesAsync();
-            });
 
             var dept = new Department
             {
@@ -82,34 +62,21 @@
                 StartDate = DateTime.Today
             };
 
-            await fixture.ExecuteDbContextAsync(async db =>
-            {
-                db.Departments.Add(dept);
-                await db.SaveChangesAsync();
-            });
-
             var course = new Course
             {
                 Credits = 4,
                 Department = dept,
-                CourseID = 1234,
+                Id = 1234,
                 Title = "English 101"
             };
 
-            await fixture.ExecuteDbContextAsync(async db =>
-            {
-                db.Courses.Add(course);
-                await db.SaveChangesAsync();
-            });
+            await fixture.InsertAsync(admin, dept, course);
 
-            await fixture.SendAsync(new Delete.Command {CourseID = course.CourseID});
+            await fixture.SendAsync(new Delete.Command {Id = course.Id});
 
-            await fixture.ExecuteDbContextAsync(async db =>
-            {
-                var result = await db.Courses.Where(c => c.CourseID == course.CourseID).SingleOrDefaultAsync();
+            var result = await fixture.ExecuteDbContextAsync(db => db.Courses.Where(c => c.Id == course.Id).SingleOrDefaultAsync());
 
-                result.ShouldBeNull();
-            });
+            result.ShouldBeNull();
         }
     }
 }

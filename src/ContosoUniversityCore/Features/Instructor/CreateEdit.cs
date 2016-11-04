@@ -49,8 +49,10 @@
             [Display(Name = "Location")]
             public string OfficeAssignmentLocation { get; set; }
 
+            [IgnoreMap]
             public string[] SelectedCourses { get; set; }
 
+            [IgnoreMap]
             public List<AssignedCourseData> AssignedCourses { get; set; }
             public List<CourseInstructor> CourseInstructors { get; set; }
 
@@ -96,7 +98,7 @@
                 else
                 {
                     model = await _db.Instructors
-                        .Where(i => i.ID == message.Id)
+                        .Where(i => i.Id == message.Id)
                         .ProjectToSingleOrDefaultAsync<Command>();
                 }
 
@@ -111,9 +113,9 @@
                 var instructorCourses = new HashSet<int>(model.CourseInstructors.Select(c => c.CourseID));
                 var viewModel = allCourses.Select(course => new Command.AssignedCourseData
                 {
-                    CourseID = course.CourseID,
+                    CourseID = course.Id,
                     Title = course.Title,
-                    Assigned = instructorCourses.Contains(course.CourseID)
+                    Assigned = instructorCourses.Contains(course.Id)
                 }).ToList();
                 model.AssignedCourses = viewModel;
             }
@@ -142,14 +144,14 @@
                     instructor = await _db.Instructors
                         .Include(i => i.OfficeAssignment)
                         .Include(i => i.CourseInstructors)
-                        .Where(i => i.ID == message.Id)
+                        .Where(i => i.Id == message.Id)
                         .SingleAsync();
                 }
                 instructor.FirstMidName = message.FirstMidName;
                 instructor.LastName = message.LastName;
-                instructor.HireDate = message.HireDate.Value;
+                instructor.HireDate = message.HireDate.GetValueOrDefault();
 
-                if (String.IsNullOrWhiteSpace(message.OfficeAssignmentLocation))
+                if (string.IsNullOrWhiteSpace(message.OfficeAssignmentLocation))
                 {
                     instructor.OfficeAssignment = null;
                 }
@@ -182,18 +184,18 @@
                     (instructorToUpdate.CourseInstructors.Select(c => c.CourseID));
                 foreach (var course in _db.Courses)
                 {
-                    if (selectedCoursesHS.Contains(course.CourseID.ToString()))
+                    if (selectedCoursesHS.Contains(course.Id.ToString()))
                     {
-                        if (!instructorCourses.Contains(course.CourseID))
+                        if (!instructorCourses.Contains(course.Id))
                         {
                             instructorToUpdate.CourseInstructors.Add(new CourseInstructor { Course = course, Instructor = instructorToUpdate});
                         }
                     }
                     else
                     {
-                        if (instructorCourses.Contains(course.CourseID))
+                        if (instructorCourses.Contains(course.Id))
                         {
-                            var toRemove = instructorToUpdate.CourseInstructors.Where(ci => ci.CourseID == course.CourseID).Single();
+                            var toRemove = instructorToUpdate.CourseInstructors.Where(ci => ci.CourseID == course.Id).Single();
                             instructorToUpdate.CourseInstructors.Remove(toRemove);
                         }
                     }

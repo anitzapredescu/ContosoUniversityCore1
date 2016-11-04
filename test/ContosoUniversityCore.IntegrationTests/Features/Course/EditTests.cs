@@ -10,7 +10,7 @@
 
     public class EditTests
     {
-        public async Task Should_query_for_command(ContainerFixture fixture)
+        public async Task Should_query_for_command(SliceFixture fixture)
         {
             var admin = new Instructor
             {
@@ -18,11 +18,6 @@
                 LastName = "Costanza",
                 HireDate = DateTime.Today,
             };
-            await fixture.ExecuteDbContextAsync(async db =>
-            {
-                db.Instructors.Add(admin);
-                await db.SaveChangesAsync();
-            });
 
             var dept = new Department
             {
@@ -32,35 +27,24 @@
                 StartDate = DateTime.Today
             };
 
-            await fixture.ExecuteDbContextAsync(async db =>
-            {
-                db.Departments.Add(dept);
-                await db.SaveChangesAsync();
-            });
-
             var course = new Course
             {
                 Credits = 4,
                 Department = dept,
-                CourseID = 1234,
+                Id = 1234,
                 Title = "English 101"
             };
+            await fixture.InsertAsync(admin, dept, course);
 
-            await fixture.ExecuteDbContextAsync(async db =>
-            {
-                db.Courses.Add(course);
-                await db.SaveChangesAsync();
-            });
-
-            var result = await fixture.SendAsync(new Edit.Query { Id = course.CourseID });
+            var result = await fixture.SendAsync(new Edit.Query { Id = course.Id });
 
             result.ShouldNotBeNull();
             result.Credits.ShouldBe(course.Credits);
-            result.Department.DepartmentID.ShouldBe(dept.DepartmentID);
+            result.Department.Id.ShouldBe(dept.Id);
             result.Title.ShouldBe(course.Title);
         }
 
-        public async Task Should_edit(ContainerFixture fixture)
+        public async Task Should_edit(SliceFixture fixture)
         {
             var admin = new Instructor
             {
@@ -68,11 +52,6 @@
                 LastName = "Costanza",
                 HireDate = DateTime.Today,
             };
-            await fixture.ExecuteDbContextAsync(async db =>
-            {
-                db.Instructors.Add(admin);
-                await db.SaveChangesAsync();
-            });
 
             var dept = new Department
             {
@@ -89,45 +68,30 @@
                 StartDate = DateTime.Today
             };
 
-            await fixture.ExecuteDbContextAsync(async db =>
-            {
-                db.Departments.Add(dept);
-                db.Departments.Add(newDept);
-                await db.SaveChangesAsync();
-            });
-
             var course = new Course
             {
                 Credits = 4,
                 Department = dept,
-                CourseID = 1234,
+                Id = 1234,
                 Title = "English 101"
             };
-
-            await fixture.ExecuteDbContextAsync(async db =>
-            {
-                db.Courses.Add(course);
-                await db.SaveChangesAsync();
-            });
+            await fixture.InsertAsync(admin, dept, newDept, course);
 
             var command = new Edit.Command
             {
-                CourseID = course.CourseID,
+                Id = course.Id,
                 Credits = 5,
                 Department = newDept,
                 Title = "English 202"
             };
             await fixture.SendAsync(command);
 
-            await fixture.ExecuteDbContextAsync(async db =>
-            {
-                var created = await db.Courses.Where(c => c.CourseID == command.CourseID).SingleOrDefaultAsync();
+            var edited = await fixture.FindAsync<Course>(course.Id);
 
-                created.ShouldNotBeNull();
-                created.DepartmentID.ShouldBe(newDept.DepartmentID);
-                created.Credits.ShouldBe(command.Credits.GetValueOrDefault());
-                created.Title.ShouldBe(command.Title);
-            });
+            edited.ShouldNotBeNull();
+            edited.DepartmentID.ShouldBe(newDept.Id);
+            edited.Credits.ShouldBe(command.Credits.GetValueOrDefault());
+            edited.Title.ShouldBe(command.Title);
         }
     }
 }

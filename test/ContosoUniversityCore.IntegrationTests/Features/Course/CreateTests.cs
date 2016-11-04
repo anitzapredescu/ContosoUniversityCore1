@@ -10,7 +10,7 @@
 
     public class CreateTests
     {
-        public async Task Should_create_new_course(ContainerFixture fixture)
+        public async Task Should_create_new_course(SliceFixture fixture)
         {
             var admin = new Instructor
             {
@@ -18,11 +18,6 @@
                 LastName = "Costanza",
                 HireDate = DateTime.Today,
             };
-            await fixture.ExecuteDbContextAsync(async db =>
-            {
-                db.Instructors.Add(admin);
-                await db.SaveChangesAsync();
-            });
 
             var dept = new Department
             {
@@ -32,11 +27,8 @@
                 StartDate = DateTime.Today
             };
 
-            await fixture.ExecuteDbContextAsync(async db =>
-            {
-                db.Departments.Add(dept);
-                await db.SaveChangesAsync();
-            });
+            await fixture.InsertAsync(admin, dept);
+
             var command = new Create.Command
             {
                 Credits = 4,
@@ -46,15 +38,12 @@
             };
             await fixture.SendAsync(command);
 
-            await fixture.ExecuteDbContextAsync(async db =>
-            {
-                var created = await db.Courses.Where(c => c.CourseID == command.Number).SingleOrDefaultAsync();
+            var created = await fixture.ExecuteDbContextAsync(db => db.Courses.Where(c => c.Id == command.Number).SingleOrDefaultAsync());
 
-                created.ShouldNotBeNull();
-                created.DepartmentID.ShouldBe(dept.DepartmentID);
-                created.Credits.ShouldBe(command.Credits);
-                created.Title.ShouldBe(command.Title);
-            });
+            created.ShouldNotBeNull();
+            created.DepartmentID.ShouldBe(dept.Id);
+            created.Credits.ShouldBe(command.Credits);
+            created.Title.ShouldBe(command.Title);
         }
     }
 }

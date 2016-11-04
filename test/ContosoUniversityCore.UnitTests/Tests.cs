@@ -3,7 +3,7 @@
     using AutoMapper;
     using Shouldly;
 
-    public class AutoMapperTests
+    public class AutoMapperTestsff
     {
         // this parameter is needed so that the initialization code
         // (automapper config) runs

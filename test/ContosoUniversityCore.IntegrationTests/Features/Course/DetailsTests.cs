@@ -8,7 +8,7 @@
 
     public class DetailsTests
     {
-        public async Task Should_query_for_details(ContainerFixture fixture)
+        public async Task Should_query_for_details(SliceFixture fixture)
         {
             var admin = new Instructor
             {
@@ -16,11 +16,6 @@
                 LastName = "Costanza",
                 HireDate = DateTime.Today,
             };
-            await fixture.ExecuteDbContextAsync(async db =>
-            {
-                db.Instructors.Add(admin);
-                await db.SaveChangesAsync();
-            });
 
             var dept = new Department
             {
@@ -30,27 +25,17 @@
                 StartDate = DateTime.Today
             };
 
-            await fixture.ExecuteDbContextAsync(async db =>
-            {
-                db.Departments.Add(dept);
-                await db.SaveChangesAsync();
-            });
-
             var course = new Course
             {
                 Credits = 4,
                 Department = dept,
-                CourseID = 1234,
+                Id = 1234,
                 Title = "English 101"
             };
 
-            await fixture.ExecuteDbContextAsync(async db =>
-            {
-                db.Courses.Add(course);
-                await db.SaveChangesAsync();
-            });
+            await fixture.InsertAsync(admin, dept, course);
 
-            var result = await fixture.SendAsync(new Details.Query { Id = course.CourseID });
+            var result = await fixture.SendAsync(new Details.Query { Id = course.Id });
 
             result.ShouldNotBeNull();
             result.Credits.ShouldBe(course.Credits);
