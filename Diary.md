@@ -59,5 +59,12 @@ ConfigureServices
 - pe urmă adaugă Automapper, Mediatr, HtmlTags și DbContext per request
 - nu e clar unde (& dacă) e configurat FluentValidator
 
+# Ziua 4?
+CourseController.cs
+- Index.Query: are departamentul din care să afișez cursurile
+- Details.Query: are id-ul cursului, dar nullable: de ce? La Student nu e nullable.
+- Edit.QueryHandler întoarce Edit.Command
+- la fel Delete.Query -> Delete.Command
+
 TODO: de înțeles HtmlTags, TagConventions e.g.  EntitySelectElementBuilder care
 populează un dropdown
